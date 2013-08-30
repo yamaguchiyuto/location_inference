@@ -4,6 +4,12 @@ class Users:
     def __init__(self):
         self.values = {}
 
+    def __str__(self):
+        res = ""
+        for user in self.values.values():
+            res += json.dumps(user) + "\n"
+        return res[:-1]
+
     def load_file(self, filepath):
         for line in open(filepath, 'r'):
             user = json.loads(line.rstrip())
@@ -17,6 +23,10 @@ class Users:
     
     def get(self, user_id):
         return self.values[user_id]
+    
+    def iter(self):
+        for user in self.values.values():
+            yield user
 
 if __name__ == '__main__':
     import sys

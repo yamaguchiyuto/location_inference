@@ -1,7 +1,11 @@
 import lib.util as util
 
 class NaiveG:
-    def __init__(self, users, graph):
+    def __init__(self):
+        self.users = None
+        self.graph = None
+
+    def learn(self, users, graph):
         self.users = users
         self.graph = graph
 
@@ -16,14 +20,13 @@ class NaiveG:
         else:
             return None
 
-    def infer(self):
-        for user in self.users.iter():
-            if user['location_point'] == None:
-                user['location_point'] = self.infer_one(user['id'])
-
-    def get_users(self):
-        return self.users
-
+    def infer(self, filepath):
+        inferred_users = {}
+        for line in open(filepath, 'r'):
+            user_id = int(line.rstrip())
+            point = self.infer_one(user_id)
+            inferred_users[user_id] = point
+        return inferred_users
 
 if __name__ == '__main__':
     import sys
@@ -39,6 +42,10 @@ if __name__ == '__main__':
     graph = Graph()
     graph.load_file(sys.argv[2])
 
-    ng = NaiveG(users, graph)
-    ng.infer()
-    print ng.get_users()
+    ng = NaiveG()
+    ng.learn(users, graph)
+    print ng.infer(0)
+    print ng.infer(1)
+    print ng.infer(2)
+    print ng.infer(3)
+    print ng.infer(4)
