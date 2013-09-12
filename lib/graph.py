@@ -5,6 +5,12 @@ class Graph:
         self.forward = {}
         self.backward = {}
 
+    def __str__(self):
+        res = ""
+        for src_id in self.forward:
+            res += json.dumps({'src_id':src_id, 'dst_ids':self.forward[src_id]}) + "\n"
+        return res[:-1]
+
     def load_file(self, filepath):
         for line in open(filepath, 'r'):
             edges = json.loads(line.rstrip())
@@ -13,8 +19,16 @@ class Graph:
                 if not dst_id in self.backward: self.backward[dst_id] = []
                 self.backward[dst_id].append(edges["src_id"])
     
-    def load_mysql(self, mysqldb):
-        pass
+    def load_mysql(self, mysqldb, users):
+        for user in users.iter():
+            query = "SELECT * FROM twitter_jp.graph WHERE src_id = %s" % user['id']
+            result = mysqldb.issue_select(query)
+            if type(result) == type(()):
+                self.forward[user['id']] = [v['dst_id'] for v in result if users.contain(v['dst_id'])]
+                for dst_id in self.forward[user['id']]:
+                    if not users.contain(dst_id): continue
+                    if not dst_id in self.backward: self.backward[dst_id] = []
+                    self.backward[dst_id].append(user['id'])
 
     def load_mongodb(self, mongodb):
         pass
@@ -31,18 +45,28 @@ class Graph:
         else:
             return ()
 
+    def followers_iter(self):
+        for dst_id in self.backward:
+            for src_id in self.backward[dst_id]:
+                yield (dst_id, src_id)
+
+    def friends_iter(self):
+        for src_id in self.forward:
+            for dst_id in self.forward[src_id]:
+                yield (src_id, dst_id)
+
 if __name__ == '__main__':
     import sys
+    from users import Users
+    from db import DB
 
     if len(sys.argv) < 2:
-        print '[usage]: python %s [graph file path]' % sys.argv[0]
+        print '[usage]: python %s [graph filepath]' % sys.argv[0]
         exit()
 
     graph = Graph()
     graph.load_file(sys.argv[1])
-    print graph.get_friends(2)
-    print graph.get_followers(0)
-    print graph.get_followers(1)
-    print graph.get_followers(2)
-    print graph.get_followers(3)
-    print graph.get_followers(4)
+    c = 0
+    for src_id in graph.friends_iter():
+        c += 1
+    print c

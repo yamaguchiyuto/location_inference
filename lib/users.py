@@ -10,32 +10,51 @@ class Users:
             res += json.dumps(user) + "\n"
         return res[:-1]
 
+    def __len__(self):
+        return len(self.values)
+
     def load_file(self, filepath):
         for line in open(filepath, 'r'):
             user = json.loads(line.rstrip())
             self.values[user['id']] = user
-    
-    def load_mysql(self, mysqldb):
-        pass
 
+    def load_mysql(self, mysqldb):
+        query = "SELECT user_id FROM tweets GROUP BY user_id HAVING count(*) >= 200"
+        result = mysqldb.issue_select(query)
+        for row in result:
+            query = "SELECT id, latitude, longitude FROM twitter_jp.users WHERE id = %s" % row['user_id']
+            user = mysqldb.issue_select(query)[0]
+            self.values[user['id']] = {'id':user['id'], 'location_point':[user['latitude'], user['longitude']]}
+   
     def load_mongodb(self, mongodb):
         pass
     
     def get(self, user_id):
-        return self.values[user_id]
+        if user_id in self.values:
+            return self.values[user_id]
+        else:
+            return None
     
+    def contain(self, user_id):
+        if user_id in self.values:
+            return True
+        else:
+            return False
+
     def iter(self):
         for user in self.values.values():
             yield user
 
 if __name__ == '__main__':
     import sys
+    from db import DB
 
-    if len(sys.argv) < 2:
-        print '[usage]: python %s [user file path]' % sys.argv[0]
+    if len(sys.argv) < 4:
+        print '[usage]: python %s [db user name] [db pass] [db name]' % sys.argv[0]
         exit()
 
 
+    db = DB(sys.argv[1], sys.argv[2], sys.argv[3])
     users = Users()
-    users.load_file(sys.argv[1])
-    print users.get(2)
+    users.load_mysql(db)
+    print users

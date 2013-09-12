@@ -1,4 +1,4 @@
-import lib.util as util
+from lib.util import Util
 
 class NaiveG:
     def __init__(self, users, graph):
@@ -9,14 +9,17 @@ class NaiveG:
         points = []
         for fid in self.graph.get_followers(user_id):
             user = self.users.get(fid)
-            points.append(user['location_point'])
+            if user != None:
+                if user['location_point'] != None:
+                    points.append(user['location_point'])
         if len(points) > 0:
-            centroid = util.calc_centroid(points)
+            #centroid = Util.calc_centroid(points)
+            centroid = Util.calc_medoid(points)
             return centroid
         else:
             return None
 
-    def infer(self):
+    def infer(self, params):
         for user in self.users.iter():
             if user['location_point'] == None:
                 user['location_point'] = self.infer_one(user['id'])

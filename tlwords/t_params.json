@@ -1,0 +1,1 @@
+{"dmin": 0.10, "cmin": 30, "window_size": 3600, "tl": true, "default": false, "r": 100, "divergence": "l2"}
