@@ -1,1 +1,0 @@
-{"dmin": 0.05, "cmin": 30, "window_size": 10800, "tl": true, "default": true, "r": 100, "divergence": "l2", "predict": "max", "dump_span": 10000}
