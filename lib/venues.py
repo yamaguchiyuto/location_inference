@@ -6,13 +6,12 @@ class Venues:
         self.values = self.load_mysql(db)
 
     def load_mysql(self, db):
-        query = "SELECT distinct venue FROM venue_graph"
+        query = "SELECT name FROM venues"
         result = db.issue_select(query)
         venues = []
         for row in result:
-            venues.append(row['venue'].lower())
+            venues.append(row['name'].lower())
         return venues
-
 
     def get_point(self, name):
         query = "SELECT * FROM venues WHERE name = '%s'" % name
@@ -45,3 +44,6 @@ class Venues:
 
 if __name__ == '__main__':
     import sys
+
+    db = DB(sys.argv[1], sys.argv[2], sys.argv[3])
+    venues = Venues(db)

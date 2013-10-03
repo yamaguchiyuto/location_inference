@@ -62,7 +62,7 @@ class UDI:
     def calc_venue_variances(self):
         venue_variances = {}
         for venue_name in self.venues.iter():
-            venue_variances[venue_name] = self.venue_variance(venue_name)
+            venue_variances[venue_name.lower()] = self.venue_variance(venue_name)
         return venue_variances
 
     def calc_user_location(self, user, params):

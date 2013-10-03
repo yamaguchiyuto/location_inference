@@ -11,7 +11,7 @@ class Evaluation:
             inferred_user = inferred_users.get(test_user['id'])
             if inferred_user != None:
                 inferred_point = inferred_user['location_point']
-                if not inferred_point == None:
+                if inferred_point != None:
                     error_distance = Util.hubeny_distance(inferred_point, true_point)
                     error_distances.append(error_distance)
         return error_distances
@@ -43,9 +43,13 @@ if __name__ == '__main__':
 
     from li_kdd12.udi import UDI
     from jurgens_icwsm13.jurgens import Jurgens
+    from cheng_cikm10.cheng import Cheng
     from naiveg.naiveg import NaiveG
     from naivec.naivec import NaiveC
-    from tlwords.tlwords import TLWords
+    from olim.olim import OLIM 
+    from olimg.olimg import OLIMG
+    from yamaguchi_cosn13.lmm import LMM
+    from hecht_chi11.hecht import Hecht
 
     def load_params(filepath):
         f = open(filepath, 'r')
@@ -71,7 +75,10 @@ if __name__ == '__main__':
         print '\tjurgens'
         print '\tcheng'
         print '\tbackstrom'
-        print '\ttlwords'
+        print '\tolim'
+        print '\tolimg'
+        print '\tlmm'
+        print '\thecht'
         exit()
 
     args = {}
@@ -115,7 +122,7 @@ if __name__ == '__main__':
         graph = Graph()
         graph.load_file(args['graph'])
         method = Backstrom(training_users, graph)
-    elif args['method'] == 'tlwords':
+    elif args['method'] == 'olim':
         db = DB(args['dbuser'], args['dbpass'], args['dbname'])
         lwords = Words()
         lwords.load_file(args['lwords'])
@@ -123,7 +130,29 @@ if __name__ == '__main__':
         f = open(args['model'], 'r')
         model = pickle.load(f)
         f.close()
-        method = TLWords(training_users, tweets, model, lwords)
+        method = OLIM(training_users, tweets, model, lwords)
+    elif args['method'] == 'olimg':
+        db = DB(args['dbuser'], args['dbpass'], args['dbname'])
+        lwords = Words()
+        lwords.load_file(args['lwords'])
+        tweets = Tweets(db)
+        graph = Graph()
+        graph.load_file(args['graph'])
+        f = open(args['model'], 'r')
+        model = pickle.load(f)
+        f.close()
+        method = OLIMG(training_users, tweets, graph, model, lwords)
+    elif args['method'] == 'lmm':
+        graph = Graph()
+        graph.load_file(args['graph'])
+        method = LMM(training_users, graph)
+    elif args['method'] == 'hecht':
+        db = DB(args['dbuser'], args['dbpass'], args['dbname'])
+        tweets = Tweets(db)
+        f = open(args['model'], 'r')
+        model = pickle.load(f)
+        f.close()
+        method = Hecht(training_users, tweets, model)
     else:
         print 'invalid method name'
         exit()
@@ -132,17 +161,20 @@ if __name__ == '__main__':
 
     method.infer(params)
     inferred_users = method.get_users()
-    error_distances = ev.calc_error_distances(inferred_users)
-    mean_ed = ev.mean_error_distance(error_distances)
-    median_ed = ev.median_error_distance(error_distances)
-    p, r = ev.precision_and_recall(error_distances, 160000) 
-    f = (2*p*r) / (p+r)
-    print json.dumps(args)
-    print json.dumps(params)
-    print "Mean ED: %f" % mean_ed
-    print "Median ED: %f" % median_ed
-    print "Precision: %f" % p
-    print "Recall: %f" % r
-    print "F-measure: %f" % f
-    for e in error_distances:
-        print e
+    if len(inferred_users) == 0:
+        print 'no reuslt'
+    else:
+        error_distances = ev.calc_error_distances(inferred_users)
+        mean_ed = ev.mean_error_distance(error_distances)
+        median_ed = ev.median_error_distance(error_distances)
+        p, r = ev.precision_and_recall(error_distances, 160000) 
+        f = (2*p*r) / (p+r)
+        print json.dumps(args)
+        print json.dumps(params)
+        print "Mean ED: %f" % mean_ed
+        print "Median ED: %f" % median_ed
+        print "Precision: %f" % p
+        print "Recall: %f" % r
+        print "F-measure: %f" % f
+        for e in error_distances:
+            print e

@@ -6,23 +6,13 @@ class NaiveC:
         self.tweets = tweets
         self.venues = venues
 
-    def extract_venues(self, user_tweets):
-        words = set([])
-        venue_points = []
-        for tweet in user_tweets:
-            for w in Util.get_place_names(tweet['text'].decode('utf8')):
-                words.add(w)
-        for w in words:
-            venue_point = self.venues.get_point(w)
-            if venue_point != None:
-                venue_points.append(venue_point)
-        return venue_points
-
     def infer_one(self, user_id):
-        user_tweets = self.tweets.get(user_id)
-        points = self.extract_venues(user_tweets) 
+        points = []
+        user_venues = self.venues.get_venues(user_id)
+        for venue_name in user_venues:
+            p = self.venues.get_point(venue_name)
+            points.append(p)
         if len(points) > 0:
-            #centroid = Util.calc_centroid(points)
             centroid = Util.calc_medoid(points)
             return centroid
         else:

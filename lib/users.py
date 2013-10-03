@@ -19,12 +19,11 @@ class Users:
             self.values[user['id']] = user
 
     def load_mysql(self, mysqldb):
-        query = "SELECT user_id FROM tweets GROUP BY user_id HAVING count(*) >= 200"
+        query = "SELECT id, latitude, longitude FROM users"
         result = mysqldb.issue_select(query)
-        for row in result:
-            query = "SELECT id, latitude, longitude FROM twitter_jp.users WHERE id = %s" % row['user_id']
-            user = mysqldb.issue_select(query)[0]
-            self.values[user['id']] = {'id':user['id'], 'location_point':[user['latitude'], user['longitude']]}
+        for user in result:
+            if user['latitude'] != None:
+                    self.values[user['id']] = {'id':user['id'], 'location_point':[user['latitude'], user['longitude']]}
    
     def load_mongodb(self, mongodb):
         pass

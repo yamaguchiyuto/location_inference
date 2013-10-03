@@ -3,11 +3,19 @@ import math
 import re
 import time
 import MeCab
+import nltk
 from osmapi import OsmApi
 
 class Util:
     tagger = MeCab.Tagger('-Ochasen')
     osmapi = OsmApi()
+
+    @classmethod
+    def str_to_tuple(self, _str):
+        match = re.match('\((\d+\.?\d+), (\d+\.?\d+)\)', _str)
+        lat = float(match.group(1))
+        lng = float(match.group(2))
+        return (lat,lng)
 
     @classmethod
     def get_venue_point(self, w):
@@ -31,6 +39,14 @@ class Util:
                 words.append(node.surface)
             node = node.next
         return words
+
+    @classmethod
+    def get_nouns_en(self, text_str):
+        text = nltk.word_tokenize(text_str)
+        result = nltk.tag.pos_tag(text)
+        nouns = [r[0]  for r in result if r[1] in {'NNP', 'NNPS'}]
+        return nouns
+
 
     @classmethod
     def get_place_names(self, text):

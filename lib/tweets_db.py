@@ -7,7 +7,7 @@ class Tweets:
 
     def get(self, user_id):
         """ get tweets posted by user_id """
-        query = "SELECT id, text, timestamp, user_id FROM tweets WHERE user_id = %s" % user_id
+        query = "SELECT id, text, timestamp, user_id FROM tweets WHERE user_id = %s ORDER BY id DESC LIMIT 200" % user_id
         result = self.db.issue_select(query)
         if type(result) == type(()):
             return result
@@ -18,6 +18,12 @@ class Tweets:
         query = "SELECT id, text, timestamp, user_id FROM tweets ORDER BY id"
         for row in self.db.iter_select(query):
             yield row
+
+    def iter(self):
+        query = "SELECT id, text, timestamp, user_id FROM tweets"
+        for row in self.db.iter_select(query):
+            yield row
+
 
 if __name__ == '__main__':
     import sys

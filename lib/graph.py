@@ -21,7 +21,7 @@ class Graph:
     
     def load_mysql(self, mysqldb, users):
         for user in users.iter():
-            query = "SELECT * FROM twitter_jp.graph WHERE src_id = %s" % user['id']
+            query = "SELECT * FROM graph WHERE src_id = %s" % user['id']
             result = mysqldb.issue_select(query)
             if type(result) == type(()):
                 self.forward[user['id']] = [v['dst_id'] for v in result if users.contain(v['dst_id'])]
@@ -60,13 +60,16 @@ if __name__ == '__main__':
     from users import Users
     from db import DB
 
-    if len(sys.argv) < 2:
-        print '[usage]: python %s [graph filepath]' % sys.argv[0]
+    if len(sys.argv) < 5:
+        print '[usage]: python %s [users filepath] [dbuser] [dbpass] [dbname]' % sys.argv[0]
         exit()
 
+    users = Users()
+    users.load_file(sys.argv[1])
     graph = Graph()
-    graph.load_file(sys.argv[1])
+    graph.load_mysql(DB(sys.argv[2], sys.argv[3], sys.argv[4]), users)
     c = 0
-    for src_id in graph.friends_iter():
+    for e in graph.followers_iter():
         c += 1
     print c
+
