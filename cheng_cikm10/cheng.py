@@ -21,7 +21,7 @@ class Cheng:
                 user_words = set([])
                 city = str(tuple(location))
                 for tweet in tweets:
-                    user_words |= set(Util.get_words(tweet['text']))
+                    user_words |= set(Util.get_nouns(tweet['text'], params['lang']))
                 for w in user_words:
                     if not w in word_counts:
                         word_counts[w] = {city: 1}
@@ -51,7 +51,7 @@ class Cheng:
                 """ unlabeled users """
                 if not user['id'] in self.user_distributions:
                     self.user_distributions[user['id']] = self.init_user_distribution()
-                words = Util.get_words(tweet['text'])
+                words = Util.get_nouns(tweet['text'], params['lang'])
                 for w in words:
                     if self.lwords.contain(w):
                         """ update using local word """

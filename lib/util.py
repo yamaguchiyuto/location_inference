@@ -31,7 +31,17 @@ class Util:
         return re.sub('(https?|ftp)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)', '', username_removed_text) # remove urls
 
     @classmethod
-    def get_words(self, text):
+    def get_nouns(self, text_str, lang):
+        if lang == 'en':
+            return self.get_nouns_en(text_str)
+        elif lang == 'ja':
+            return self.get_nouns_ja(text_str)
+        else:
+            print 'invalid language'
+            exit()
+
+    @classmethod
+    def get_nouns_ja(self, text):
         words = []
         node = self.tagger.parseToNode(self.remove_usernames_and_urls(text))
         while node:
