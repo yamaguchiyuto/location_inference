@@ -24,7 +24,7 @@ class Hecht:
                 pc[city] += 1
 
                 for tweet in tweets:
-                    user_words |= set(Util.get_words(tweet['text']))
+                    user_words |= set(Util.get_nouns(tweet['text'], params['lang']))
                 for w in user_words:
                     if not w in pwc:
                         pwc[w] = {city: 1}
@@ -64,7 +64,7 @@ class Hecht:
         tweets = self.tweets.get(user_id)
         user_words = {}
         for tweet in tweets:
-            for w in Util.get_words(tweet['text']):
+            for w in Util.get_nouns(tweet['text'], params['lang']):
                 if not w in user_words: user_words[w] = 0
                 user_words[w] += 1
         city_probs = {}

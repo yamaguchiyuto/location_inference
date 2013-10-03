@@ -117,7 +117,7 @@ if __name__ == '__main__':
     ch = Cheng(users, tweets, lwords)
     #print tl.extract_local_words({'dmin':0.05, 'cmin':30})
     #print tl.extract_local_words_(tl.tweets.stream(), {'dmin':0.05, 'cmin':30, 'window_size':1800, 'tl':False, 'default':False, 'divergence':'l2'})
-    print ch.extract_local_words_batch({'dmax':400000, 'cmin':30})
+    print ch.extract_local_words_batch({'dmax':400000, 'cmin':30, 'lang': 'en'})
     #print tl.extract_local_words_batch({'dmin':1.0, 'cmin':30, 'window_size':1800, 'tl':False, 'default':False, 'divergence':'kl'})
     #print tl.extract_local_words_batch({'dmin':300000, 'cmin':30, 'window_size':1800, 'tl':False, 'default':False, 'divergence':'dispersion'})
 

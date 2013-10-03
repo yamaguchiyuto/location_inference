@@ -25,7 +25,7 @@ class OLIM:
                 tweets = self.tweets.get(user['id'])
                 user_words = set([])
                 for tweet in tweets:
-                    user_words |= set(Util.get_words(tweet['text']))
+                    user_words |= set(Util.get_nouns(tweet['text'], params['lang']))
                 for w in user_words:
                     if not w in word_counts:
                         word_counts[w] = {city: 1}
@@ -52,7 +52,7 @@ class OLIM:
         word_sets = {}
         for tweet in tweets:
             if not tweet['user_id'] in word_sets: word_sets[tweet['user_id']] = set([])
-            words = Util.get_words(tweet['text'])
+            words = Util.get_nouns(tweet['text'], params['lang'])
             word_sets[tweet['user_id']] |= set(words)
 
         for user_id in word_sets:
@@ -84,7 +84,7 @@ class OLIM:
         """ making user sets """
         user_sets = {}
         for tweet in tweets:
-            words = Util.get_words(tweet['text'])
+            words = Util.get_nouns(tweet['text'], params['lang'])
             for w in words:
                 if not w in user_sets: user_sets[w] = set([])
                 user_sets[w].add(tweet['user_id'])
@@ -156,7 +156,7 @@ class OLIM:
                     """ unlabeled users """
                     if not user['id'] in self.user_distributions:
                         self.user_distributions[user['id']] = self.init_user_distribution()
-                    words = Util.get_words(tweet['text'])
+                    words = Util.get_nouns(tweet['text'], params['lang'])
                     for w in words:
                         if tlwords.contain(w):
                             """ update using temporally-local word """
