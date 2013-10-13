@@ -1,18 +1,8 @@
-from util import Util
+from db import DB
 
+db = DB('yuto', 'sinpai56you', 'kdecamp2013')
 
-a = [1,3,1,3,1,3,4,5]
-s = float(sum(a))
-for i in range(0, len(a)):
-    a[i] = a[i] / s
-s = sum([v**2 for v in a])
+result = db.issue_select('select * from users')
 
-print s
-b = {3:1, 5:9}
-c = [0,0,0,1,0,9,0,0]
-
-print Util.l2dist(a,c)
-Util.l2dist_fast(s, a,b)
-
-print s
-
+for row in result:
+    print "%s,%s" % (row['id'], row['location'])

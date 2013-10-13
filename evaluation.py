@@ -50,6 +50,8 @@ if __name__ == '__main__':
     from olimg.olimg import OLIMG
     from yamaguchi_cosn13.lmm import LMM
     from hecht_chi11.hecht import Hecht
+    from backstrom_www10.backstrom import Backstrom
+    from kinsella_smuc11.kinsella import Kinsella
 
     def load_params(filepath):
         f = open(filepath, 'r')
@@ -79,6 +81,8 @@ if __name__ == '__main__':
         print '\tolimg'
         print '\tlmm'
         print '\thecht'
+        print '\tbackstrom'
+        print '\tkinsella'
         exit()
 
     args = {}
@@ -118,10 +122,6 @@ if __name__ == '__main__':
         lwords.load_file(args['lwords'])
         tweets = Tweets(db)
         method = Cheng(training_users, tweets, lwords)
-    elif args['method'] == 'backstrom':
-        graph = Graph()
-        graph.load_file(args['graph'])
-        method = Backstrom(training_users, graph)
     elif args['method'] == 'olim':
         db = DB(args['dbuser'], args['dbpass'], args['dbname'])
         lwords = Words()
@@ -153,6 +153,20 @@ if __name__ == '__main__':
         model = pickle.load(f)
         f.close()
         method = Hecht(training_users, tweets, model)
+    elif args['method'] == 'backstrom':
+        graph = Graph()
+        graph.load_file(args['graph'])
+        f = open(args['model'], 'r')
+        model = pickle.load(f)
+        f.close()
+        method = Backstrom(training_users, graph, model)
+    elif args['method'] == 'kinsella':
+        db = DB(args['dbuser'], args['dbpass'], args['dbname'])
+        tweets = Tweets(db)
+        f = open(args['model'], 'r')
+        model = pickle.load(f)
+        f.close()
+        method = Kinsella(training_users, tweets, model)
     else:
         print 'invalid method name'
         exit()

@@ -108,9 +108,9 @@ if __name__ == '__main__':
     tweets = Tweets(db)
 
     method = Hecht(users, tweets)
-    model = method.calgari({'minu':30, 'max_count':10000})
+    model = method.calgari({'minu':30, 'max_count':10000, 'lang':'en'})
     method.set_model(model)
     method.model_dump()
-    f = open('calgari.model', 'w')
+    f = open('calgari.us.model', 'w')
     pickle.dump(model, f)
     f.close()
