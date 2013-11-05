@@ -23,7 +23,7 @@ Run 'python evaluation.py' for help.
 
 # DB to prepare
 
-tweet table  
+## tweet table  
 +-----------+------------+------+-----+---------+-------+  
 | Field     | Type       | Null | Key | Default | Extra |  
 +-----------+------------+------+-----+---------+-------+  
