@@ -20,3 +20,17 @@ Run 'python evaluation.py' for help.
 .  
 .  
 .  
+
+# DB to prepare
+
+tweet table  
++-----------+------------+------+-----+---------+-------+  
+| Field     | Type       | Null | Key | Default | Extra |  
++-----------+------------+------+-----+---------+-------+  
+| id        | bigint(20) | NO   | PRI | 0       |       |  
+| text      | text       | YES  |     | NULL    |       |  
+| timestamp | datetime   | YES  | MUL | NULL    |       |  
+| user_id   | bigint(20) | YES  | MUL | NULL    |       |  
++-----------+------------+------+-----+---------+-------+  
+
+
